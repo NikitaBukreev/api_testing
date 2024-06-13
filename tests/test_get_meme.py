@@ -3,6 +3,9 @@ import allure
 import random
 
 
+random_meme_id = random.randint(1, 5000)
+
+
 @allure.feature('Get meme tests')
 @allure.story('Get all memes test')
 @pytest.mark.smoke
@@ -16,7 +19,6 @@ def test_get_full_meme_list(get_class, auth_token):
 @allure.story('Get one meme')
 @pytest.mark.smoke
 def test_get_one(get_class, auth_token):
-    random_meme_id = random.randint(1, 5000)
     get_class.get_one_meme(auth_token, random_meme_id)
     get_class.check_one_meme(get_class.json)
 
@@ -36,3 +38,13 @@ def test_get_one(get_class, auth_token):
 def test_validate_one(get_class, auth_token, status_code, meme_id):
     get_class.get_one_meme(auth_token, meme_id)
     get_class.check_status(status_code, get_class.status_code)
+
+
+@allure.feature('Get meme tests')
+@allure.story("Check that unauthorized user can't get meme")
+@pytest.mark.smoke
+def test_get_one(get_class, auth_token):
+    get_class.get_full_meme_list(get_class.generate_random_token())
+    get_class.check_status(401, get_class.status_code)
+    get_class.get_one_meme(get_class.generate_random_token(), random_meme_id)
+    get_class.check_status(401, get_class.status_code)

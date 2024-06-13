@@ -6,7 +6,6 @@ from endpoints.base_enpdoint import BaseEndpoint
 class AuthEndpoint(BaseEndpoint):
     token = None
     user = None
-    status_code = None
     response_text = None
 
     @allure.step('Take auth token')

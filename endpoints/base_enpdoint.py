@@ -1,10 +1,6 @@
-import requests
-import pytest
-import random
 import allure
 import string
 import random
-
 
 
 class BaseEndpoint:
@@ -12,8 +8,8 @@ class BaseEndpoint:
     url = 'http://167.172.172.115:52355/'
     response = None
     json = None
-    #headers = None
     auth_json = {'name': 'kek'}
+    status_code = None
 
     @allure.step('Check elements are equal')
     def are_equal(self, a, b, message):
@@ -77,4 +73,10 @@ class BaseEndpoint:
         else:
             self.are_equal(False, True, f'Unexpected response_json type: {type(response_json)}')
 
-
+    @allure.step('Delete one key from dict')
+    def delete_one_key(self, body, del_key):
+        body_without_key = {}
+        for key, value in body.items():
+            if key != del_key:
+                body_without_key[key] = value
+        return body_without_key
