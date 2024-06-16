@@ -14,6 +14,7 @@ class BaseEndpoint:
     status_code = None
     token = None
     user = None
+    response_text = None
 
     @allure.step('Check elements are equal')
     def are_equal(self, a, b, message):

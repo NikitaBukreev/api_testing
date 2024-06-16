@@ -1,9 +1,5 @@
 import pytest
 import allure
-import random
-
-
-random_meme_id = random.randint(1, 5000)
 
 
 @allure.feature('Get meme tests')
@@ -18,8 +14,8 @@ def test_get_full_meme_list(get_class, auth_token):
 @allure.feature('Get meme tests')
 @allure.story('Get one meme')
 @pytest.mark.smoke
-def test_get_one(get_class, auth_token):
-    get_class.get_one_meme(auth_token, random_meme_id)
+def test_get_one(get_class, auth_token, base_class):
+    get_class.get_one_meme(auth_token, base_class.generate_random_meme_id())
     get_class.check_one_meme(get_class.json)
 
 

@@ -13,14 +13,15 @@ BODY = {
 @allure.feature('Post meme tests')
 @allure.story('Create meme by post request with valid data')
 @pytest.mark.smoke
-def test_post_meme(post_class, get_class, auth_token):
+def test_post_meme(post_class, get_class, auth_token, delete_class):
     post_class.post_meme(auth_token, BODY)
+    meme_id = post_class.post_id
     post_class.check_json_is_valid(post_class.json)
     post_class.check_response_body_data(BODY, post_class.json)
     post_class.check_unique_body_data(post_class.json)
-    get_class.get_one_meme(auth_token, post_class.post_id)
+    get_class.get_one_meme(auth_token, meme_id)
     post_class.check_get_response(get_class.json, post_class.json)
-    # TODO Не забыть удалить мем когда будет готов метод удаления
+    delete_class.delete_meme(auth_token, meme_id)
 
 
 @allure.feature('Post meme tests')
@@ -32,7 +33,6 @@ def test_post_meme_required_fields(post_class, auth_token, deleted_key):
     del new_body[deleted_key]
     post_class.post_meme(auth_token, new_body)
     post_class.check_status(400, post_class.status_code)
-
 
 
 @allure.feature('Post meme tests')
@@ -57,7 +57,7 @@ def test_post_meme_required_type_fields(post_class, auth_token, key, value):
 
 @allure.feature('Post meme tests')
 @allure.story("Check that unauthorized user can't post meme")
-@pytest.mark.regress
+@pytest.mark.smoke
 def test_post_meme_unauthorized(post_class, auth_token):
     post_class.post_meme(post_class.generate_random_token(), BODY)
     post_class.check_status(401, post_class.status_code)

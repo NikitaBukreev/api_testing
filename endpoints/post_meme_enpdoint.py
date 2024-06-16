@@ -28,7 +28,6 @@ class PostEndpoint(BaseEndpoint):
                 f"in request '{body[key]}', but in response '{response_json[key]}'"
             )
 
-
     @allure.step('Check that get response is the same as post response')
     def check_get_response(self, get_response, post_response):
         self.are_equal(get_response, post_response, 'Get response is NOT the same as post response')

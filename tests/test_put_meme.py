@@ -20,7 +20,7 @@ BODY_PUT = {
 @allure.feature('Edit meme tests')
 @allure.story('Edit new created meme')
 @pytest.mark.smoke
-def test_put_meme(put_class, post_class, get_class, auth_token):
+def test_put_meme(put_class, post_class, get_class, auth_token, delete_class):
     # создаем и проверяем, что мем создался
     body_put = BODY_PUT.copy()
     post_class.post_meme(auth_token, BODY_POST)
@@ -37,21 +37,22 @@ def test_put_meme(put_class, post_class, get_class, auth_token):
 
     # проверяем, что уникальные поля на месте
     put_class.check_unique_body_data(edited_meme.json())
-    # TODO Не забыть удалить мем когда будет готов метод удаления
+    delete_class.delete_meme(auth_token, meme_id)
 
 
 @allure.feature('Edit meme tests')
 @allure.story('Check that all fields are required')
 @pytest.mark.regress
 @pytest.mark.parametrize('deleted_key', ('text', 'url', 'tags', 'info', 'id'))
-def test_put_meme_required_fields(put_class, post_class, auth_token, deleted_key):
+def test_put_meme_required_fields(put_class, post_class, auth_token, deleted_key, delete_class):
     body_put = BODY_PUT.copy()
     post_class.post_meme(auth_token, BODY_POST)
-    body_put['id'] = post_class.post_id
+    meme_id = post_class.post_id
+    body_put['id'] = meme_id
     del body_put[deleted_key]
     put_class.put_meme(auth_token, body_put, post_class.post_id)
     put_class.check_status(400, put_class.status_code)
-    # TODO Не забыть удалить мем когда будет готов метод удаления
+    delete_class.delete_meme(auth_token, meme_id)
 
 
 @allure.feature('Edit meme tests')
@@ -69,39 +70,42 @@ def test_put_meme_required_fields(put_class, post_class, auth_token, deleted_key
     ('info', "notadict"),
     ('info', []),
 ])
-def test_put_meme_required_type_fields(put_class, post_class, auth_token, key, value):
+def test_put_meme_required_type_fields(put_class, post_class, auth_token, key, value, delete_class):
     body_put = BODY_PUT.copy()
     post_class.post_meme(auth_token, BODY_POST)
-    body_put['id'] = post_class.post_id
+    meme_id = post_class.post_id
+    body_put['id'] = meme_id
     body_put[key] = value
     put_class.put_meme(auth_token, body_put, post_class.post_id)
     post_class.check_status(400, put_class.status_code)
-    # TODO Не забыть удалить мем когда будет готов метод удаления
+    delete_class.delete_meme(auth_token, meme_id)
 
 
 @allure.feature('Edit meme tests')
 @allure.story("Check that only the meme's author can edit it")
 @pytest.mark.smoke
-def test_edit_meme_another_user(put_class, auth_token, base_class, post_class, get_class):
+def test_edit_meme_another_user(put_class, auth_token, base_class, post_class, get_class, delete_class):
     # Тут два варианта:
     # 1) можно сделать дополнительную авторизацию для генерации нового токена на другое имя
     # 2) а можно просто гетать рандомный мем и проверять, кто его автор, если автор не я, то пытаться изменить
     # первый способ более правильный (так как если получится внести изменения, то нехорошо менять чужие мемы),
     # второй более простой. Выбрал первый способ
     base_class.auth_another_user()
-    post_class.post_meme(base_class.token, BODY_POST)
+    another_token = base_class.token
+    post_class.post_meme(another_token, BODY_POST)
     meme_id = post_class.post_id
     get_class.get_one_meme(auth_token, meme_id)
     base_class.check_author_name(base_class.auth_json_another_user['name'], get_class.json['updated_by'])
     BODY_PUT['id'] = meme_id
     put_class.put_meme(auth_token, BODY_PUT, meme_id)
     put_class.check_status(403, put_class.status_code)
+    delete_class.delete_meme(another_token, meme_id)
 
 
 @allure.feature('Edit meme tests')
 @allure.story("Check that id in request path and request bode must be the same")
 @pytest.mark.regress
-def test_edit_meme_different_id(put_class, auth_token, post_class):
+def test_edit_meme_different_id(put_class, auth_token, post_class,delete_class):
     post_class.post_meme(auth_token, BODY_POST)
     meme_id = post_class.post_id
     random_meme_id = post_class.generate_random_meme_id()
@@ -114,10 +118,13 @@ def test_edit_meme_different_id(put_class, auth_token, post_class):
     put_class.put_meme(auth_token, BODY_PUT, meme_id)
     put_class.check_status(400, put_class.status_code)
 
+    delete_class.delete_meme(auth_token, meme_id)
+
+
 
 @allure.feature('Edit meme tests')
 @allure.story("Check that unauthorized user can't edit meme")
-@pytest.mark.regress
+@pytest.mark.smoke
 def test_put_meme_unauthorized(post_class, put_class, auth_token):
     post_class.post_meme(auth_token, BODY_POST)
     meme_id = post_class.post_id
