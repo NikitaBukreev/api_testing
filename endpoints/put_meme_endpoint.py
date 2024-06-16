@@ -20,3 +20,4 @@ class PutEndpoint(BaseEndpoint):
     @allure.step('Check that get response is the same as put response')
     def check_get_response(self, get_response, post_response):
         self.are_equal(get_response, post_response, 'Get response is NOT the same as post response')
+

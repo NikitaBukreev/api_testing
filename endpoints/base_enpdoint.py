@@ -1,6 +1,7 @@
 import allure
 import string
 import random
+import requests
 
 
 class BaseEndpoint:
@@ -9,7 +10,10 @@ class BaseEndpoint:
     response = None
     json = None
     auth_json = {'name': 'kek'}
+    auth_json_another_user = {'name': 'another_kek'}
     status_code = None
+    token = None
+    user = None
 
     @allure.step('Check elements are equal')
     def are_equal(self, a, b, message):
@@ -36,6 +40,10 @@ class BaseEndpoint:
         my_string = string.ascii_letters + string.digits
         random_string = ''.join(random.choices(my_string, k=15))
         return random_string
+
+    @allure.step('Generate random meme id')
+    def generate_random_meme_id(self):
+        return random.randint(1, 5000)
 
     @allure.step('Check response status')
     def check_status(self, expected_status, real_status):
@@ -80,3 +88,19 @@ class BaseEndpoint:
         auth_name = self.auth_json['name']
         self.are_equal(id_type, int, f'Needed int type in id, but given {id_type}')
         self.are_equal(updated_by, auth_name, f'Needed {auth_name} in updated_by, but given {updated_by}')
+
+    @allure.step('Auth by another user')
+    def auth_another_user(self):
+        self.response = requests.post(f'{self.url}authorize', json=self.auth_json_another_user)
+        self.json = self.response.json()
+        self.token = self.json['token']
+        self.user = self.json['user']
+        return self.response
+
+    @allure.step('Check author name')
+    def check_author_name(self, expected_name, result_name):
+        self.are_equal(
+            expected_name,
+            result_name,
+            f'Needed author {expected_name}, but given another author {result_name}'
+        )
