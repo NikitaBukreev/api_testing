@@ -27,10 +27,12 @@ def test_post_meme(post_class, get_class, auth_token):
 @allure.story('Check that all fields are required')
 @pytest.mark.regress
 @pytest.mark.parametrize('deleted_key', ('text', 'url', 'tags', 'info'))
-def test_post_meme_required_fields(post_class, auth_token, deleted_key, get_class):
-    new_body = post_class.delete_one_key(BODY, deleted_key)
+def test_post_meme_required_fields(post_class, auth_token, deleted_key):
+    new_body = BODY.copy()
+    del new_body[deleted_key]
     post_class.post_meme(auth_token, new_body)
     post_class.check_status(400, post_class.status_code)
+
 
 
 @allure.feature('Post meme tests')

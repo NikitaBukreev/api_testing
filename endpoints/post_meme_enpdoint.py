@@ -28,13 +28,6 @@ class PostEndpoint(BaseEndpoint):
                 f"in request '{body[key]}', but in response '{response_json[key]}'"
             )
 
-    @allure.step('Check that unique keys are in response body')
-    def check_unique_body_data(self, response_json):
-        id_type = type(response_json['id'])
-        updated_by = response_json['updated_by']
-        auth_name = self.auth_json['name']
-        self.are_equal(id_type, int, f'Needed int type if id, but given {id_type}')
-        self.are_equal(updated_by, auth_name, f'Needed {auth_name} in updated_by, but given {updated_by}')
 
     @allure.step('Check that get response is the same as post response')
     def check_get_response(self, get_response, post_response):

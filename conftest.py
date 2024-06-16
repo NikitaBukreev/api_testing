@@ -7,6 +7,7 @@ from endpoints.auth_endpoint import AuthEndpoint
 from endpoints.post_meme_enpdoint import PostEndpoint
 from endpoints.get_meme_endpoint import GetEndpoint
 from endpoints.delete_meme_endpoint import DeleteEndpoint
+from endpoints.put_meme_endpoint import PutEndpoint
 
 url = 'http://167.172.172.115:52355/'
 response = None
@@ -32,6 +33,9 @@ def post_class():
 def get_class():
     return GetEndpoint()
 
+@pytest.fixture()
+def put_class():
+    return PutEndpoint()
 
 @pytest.fixture()
 def delete_class():

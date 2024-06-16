@@ -73,10 +73,10 @@ class BaseEndpoint:
         else:
             self.are_equal(False, True, f'Unexpected response_json type: {type(response_json)}')
 
-    @allure.step('Delete one key from dict')
-    def delete_one_key(self, body, del_key):
-        body_without_key = {}
-        for key, value in body.items():
-            if key != del_key:
-                body_without_key[key] = value
-        return body_without_key
+    @allure.step('Check that unique keys are in response body')
+    def check_unique_body_data(self, response_json):
+        id_type = type(response_json['id'])
+        updated_by = response_json['updated_by']
+        auth_name = self.auth_json['name']
+        self.are_equal(id_type, int, f'Needed int type in id, but given {id_type}')
+        self.are_equal(updated_by, auth_name, f'Needed {auth_name} in updated_by, but given {updated_by}')
