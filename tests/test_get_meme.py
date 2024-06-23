@@ -39,7 +39,7 @@ def test_validate_one(get_class, auth_token, status_code, meme_id):
 @allure.feature('Get meme tests')
 @allure.story("Check that unauthorized user can't get meme")
 @pytest.mark.smoke
-def test_get_one(get_class, auth_token):
+def test_get_unauthorized(get_class, auth_token):
     get_class.get_full_meme_list(get_class.generate_random_token())
     get_class.check_status(401, get_class.status_code)
     get_class.get_one_meme(get_class.generate_random_token(), get_class.generate_random_meme_id)

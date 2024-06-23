@@ -1,5 +1,3 @@
-import random
-import string
 import pytest
 import requests
 from endpoints.base_enpdoint import BaseEndpoint
@@ -15,9 +13,11 @@ json = None
 headers = None
 auth_json = {'name': 'kek'}
 
+
 @pytest.fixture()
 def auth_class():
     return AuthEndpoint()
+
 
 @pytest.fixture()
 def base_class():
@@ -33,9 +33,11 @@ def post_class():
 def get_class():
     return GetEndpoint()
 
+
 @pytest.fixture()
 def put_class():
     return PutEndpoint()
+
 
 @pytest.fixture()
 def delete_class():
@@ -48,13 +50,8 @@ def auth_token(base_class):
     response_check = requests.get(f'{url}authorize/{old_token}')
     if response_check.status_code == 404:
         response_new = requests.post(f'{url}authorize', json=auth_json).json()
-        #headers = {'Authorization': response_new['token']}
         new_token = response_new['token']
-        #print(new_token)
         base_class.write_file(new_token)
         return new_token
     elif response_check.text == 'Token is alive. Username is kek':
-        #print(base_class.read_file)
-
         return old_token
-

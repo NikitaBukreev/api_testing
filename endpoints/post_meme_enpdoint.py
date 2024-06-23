@@ -19,7 +19,7 @@ class PostEndpoint(BaseEndpoint):
     @allure.step('Check that body in response is the sam as in request')
     def check_response_body_data(self, body, response_json):
         common_keys = body.keys() & response_json.keys()
-        self.are_equal(common_keys, {'info', 'text', 'url', 'tags'}, f"Where is no some keys in response")
+        self.are_equal(common_keys, {'info', 'text', 'url', 'tags'}, "Where is no some keys in response")
         for key in common_keys:
             self.are_equal(
                 body[key],

@@ -30,6 +30,10 @@ pytest --alluredir=allure-results
 ```shell
 allure serve allure-results
 ```
+### Для локального запуска lint 
+```shell
+flake8 .
+```
 ### В корне проекта создайте пустой файл (необязательно, в коде предусмотрено автосоздание файла)
 ```
 token.txt
