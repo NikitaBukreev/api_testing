@@ -27,16 +27,16 @@ def test_put_meme(put_class, post_class, get_class, auth_token, delete_class):
     meme_id = post_class.post_id
     body_put["id"] = meme_id
     posted_meme = get_class.get_one_meme(auth_token, meme_id)
-    post_class.check_get_response(posted_meme.json(), post_class.json)
+    post_class.check_get_response(posted_meme.json())
 
     # изменяем и проверяем, что изменения применились
     put_class.put_meme(auth_token, body_put, meme_id)
-    put_class.check_json_is_valid(put_class.json)
+    put_class.check_json_is_valid()
     edited_meme = get_class.get_one_meme(auth_token, meme_id)
-    put_class.check_get_response(edited_meme.json(), put_class.json)
+    put_class.check_get_response(edited_meme.json())
 
     # проверяем, что уникальные поля на месте
-    put_class.check_unique_body_data(edited_meme.json())
+    get_class.check_unique_body_data()
     delete_class.delete_meme(auth_token, meme_id)
 
 
@@ -50,8 +50,8 @@ def test_put_meme_required_fields(put_class, post_class, auth_token, deleted_key
     meme_id = post_class.post_id
     body_put['id'] = meme_id
     del body_put[deleted_key]
-    put_class.put_meme(auth_token, body_put, post_class.post_id)
-    put_class.check_status(400, put_class.status_code)
+    put_class.put_meme(auth_token, body_put, meme_id)
+    put_class.check_status(400)
     delete_class.delete_meme(auth_token, meme_id)
 
 
@@ -77,7 +77,7 @@ def test_put_meme_required_type_fields(put_class, post_class, auth_token, key, v
     body_put['id'] = meme_id
     body_put[key] = value
     put_class.put_meme(auth_token, body_put, post_class.post_id)
-    post_class.check_status(400, put_class.status_code)
+    put_class.check_status(400)
     delete_class.delete_meme(auth_token, meme_id)
 
 
@@ -95,10 +95,10 @@ def test_edit_meme_another_user(put_class, auth_token, base_class, post_class, g
     post_class.post_meme(another_token, BODY_POST)
     meme_id = post_class.post_id
     get_class.get_one_meme(auth_token, meme_id)
-    base_class.check_author_name(base_class.auth_json_another_user['name'], get_class.json['updated_by'])
+    base_class.check_author_name(get_class.json['updated_by'])
     BODY_PUT['id'] = meme_id
     put_class.put_meme(auth_token, BODY_PUT, meme_id)
-    put_class.check_status(403, put_class.status_code)
+    put_class.check_status(403)
     delete_class.delete_meme(another_token, meme_id)
 
 
@@ -112,11 +112,11 @@ def test_edit_meme_different_id(put_class, auth_token, post_class, delete_class)
 
     BODY_PUT['id'] = meme_id
     put_class.put_meme(auth_token, BODY_PUT, random_meme_id)
-    put_class.check_status(403, put_class.status_code)
+    put_class.check_status(403)
 
     BODY_PUT['id'] = random_meme_id
     put_class.put_meme(auth_token, BODY_PUT, meme_id)
-    put_class.check_status(400, put_class.status_code)
+    put_class.check_status(400)
 
     delete_class.delete_meme(auth_token, meme_id)
 
@@ -129,4 +129,4 @@ def test_put_meme_unauthorized(post_class, put_class, auth_token):
     meme_id = post_class.post_id
     BODY_PUT['id'] = meme_id
     put_class.put_meme(put_class.generate_random_token(), BODY_PUT, meme_id)
-    put_class.check_status(401, put_class.status_code)
+    put_class.check_status(401)

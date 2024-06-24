@@ -18,9 +18,9 @@ class DeleteEndpoint(BaseEndpoint):
         return self.response
 
     @allure.step('Check message in response')
-    def check_delete_message(self, real_message, meme_id):
+    def check_delete_message(self, meme_id):
         self.are_equal(
             f"Meme with id {meme_id} successfully deleted",
-            real_message,
-            f"Need 'Meme with id....deleted' but given \'{real_message}\'"
+            self.response_text,
+            f"Need 'Meme with id....deleted' but given \'{self.response_text}\'"
         )

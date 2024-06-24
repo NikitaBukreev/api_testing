@@ -23,13 +23,13 @@ class GetEndpoint(BaseEndpoint):
         return self.response
 
     @allure.step("Check that 'data' is in list")
-    def check_data_is_exist(self, response_json):
-        self.are_equal(list(response_json.keys())[0], 'data', 'There is no data in response json')
+    def check_data_is_exist(self):
+        self.are_equal(list(self.json.keys())[0], 'data', 'There is no data in response json')
 
     @allure.step('Check that response json have only one meme')
-    def check_one_meme(self, response_json):
+    def check_one_meme(self):
         id_count = 0
-        for item in response_json:
+        for item in self.json:
             if 'id' in item:
                 id_count += 1
 

@@ -17,17 +17,17 @@ class PostEndpoint(BaseEndpoint):
         return self.response
 
     @allure.step('Check that body in response is the sam as in request')
-    def check_response_body_data(self, body, response_json):
-        common_keys = body.keys() & response_json.keys()
+    def check_response_body_data(self, body):
+        common_keys = body.keys() & self.json.keys()
         self.are_equal(common_keys, {'info', 'text', 'url', 'tags'}, "Where is no some keys in response")
         for key in common_keys:
             self.are_equal(
                 body[key],
-                response_json[key],
+                self.json[key],
                 f"Fields '{key}' in request and response are different: "
-                f"in request '{body[key]}', but in response '{response_json[key]}'"
+                f"in request '{body[key]}', but in response '{self.json[key]}'"
             )
 
     @allure.step('Check that get response is the same as post response')
-    def check_get_response(self, get_response, post_response):
-        self.are_equal(get_response, post_response, 'Get response is NOT the same as post response')
+    def check_get_response(self, get_response):
+        self.are_equal(get_response, self.json, 'Get response is NOT the same as post response')

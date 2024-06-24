@@ -7,8 +7,8 @@ import allure
 @pytest.mark.smoke
 def test_get_full_meme_list(get_class, auth_token):
     get_class.get_full_meme_list(auth_token)
-    get_class.check_data_is_exist(get_class.json)
-    get_class.check_json_is_valid(get_class.json['data'])
+    get_class.check_data_is_exist()
+    get_class.check_json_is_valid()
 
 
 @allure.feature('Get meme tests')
@@ -16,7 +16,7 @@ def test_get_full_meme_list(get_class, auth_token):
 @pytest.mark.smoke
 def test_get_one(get_class, auth_token, base_class):
     get_class.get_one_meme(auth_token, base_class.generate_random_meme_id())
-    get_class.check_one_meme(get_class.json)
+    get_class.check_one_meme()
 
 
 @allure.feature('Get meme tests')
@@ -33,7 +33,7 @@ def test_get_one(get_class, auth_token, base_class):
 )
 def test_validate_one(get_class, auth_token, status_code, meme_id):
     get_class.get_one_meme(auth_token, meme_id)
-    get_class.check_status(status_code, get_class.status_code)
+    get_class.check_status(status_code)
 
 
 @allure.feature('Get meme tests')
@@ -41,6 +41,6 @@ def test_validate_one(get_class, auth_token, status_code, meme_id):
 @pytest.mark.smoke
 def test_get_unauthorized(get_class, auth_token):
     get_class.get_full_meme_list(get_class.generate_random_token())
-    get_class.check_status(401, get_class.status_code)
-    get_class.get_one_meme(get_class.generate_random_token(), get_class.generate_random_meme_id)
-    get_class.check_status(401, get_class.status_code)
+    get_class.check_status(401)
+    get_class.get_one_meme(get_class.generate_random_token(), get_class.generate_random_meme_id())
+    get_class.check_status(401)

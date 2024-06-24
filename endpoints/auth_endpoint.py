@@ -13,6 +13,7 @@ class AuthEndpoint(BaseEndpoint):
         self.json = self.response.json()
         self.token = self.json['token']
         self.user = self.json['user']
+        self.status_code = self.response.status_code
         return self.response
 
     @allure.step('Check that token is alive')
@@ -23,22 +24,22 @@ class AuthEndpoint(BaseEndpoint):
         return self.response
 
     @allure.step('Check response status')
-    def check_status(self, expected_status, real_status):
-        self.are_equal(expected_status, real_status, f'Need {expected_status} but given {real_status}')
+    def check_status(self, expected_status):
+        self.are_equal(expected_status, self.status_code, f'Need {expected_status} but given {self.status_code}')
 
     @allure.step('Check message in response')
-    def check_alive_message(self, real_message):
+    def check_alive_message(self):
         self.are_equal(
             f"Token is alive. Username is {self.auth_json['name']}",
-            real_message,
-            f"Need 'Token is alive....' but given \'{real_message}\'"
+            self.response_text,
+            f"Need 'Token is alive....' but given \'{self.response_text}\'"
         )
 
     @allure.step('Save new token for use in other tests')
-    def save_new_token(self, token):
+    def save_new_token(self):
         self.read_file()
-        self.write_file(token)
+        self.write_file(self.token)
 
     @allure.step('Check the count of symbols in token')
-    def check_token(self, token):
-        self.are_equal(15, len(token), f'Need 15 symbols in token, but given {len(token)}')
+    def check_token(self):
+        self.are_equal(15, len(self.token), f'Need 15 symbols in token, but given {len(self.token)}')

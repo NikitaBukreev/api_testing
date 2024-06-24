@@ -47,11 +47,11 @@ class BaseEndpoint:
         return random.randint(1, 5000)
 
     @allure.step('Check response status')
-    def check_status(self, expected_status, real_status):
-        self.are_equal(expected_status, real_status, f'Need {expected_status} but given {real_status}')
+    def check_status(self, expected_status):
+        self.are_equal(expected_status, self.status_code, f'Need {expected_status} but given {self.status_code}')
 
     @allure.step('Check that response json have valid format')
-    def check_json_is_valid(self, response_json):
+    def check_json_is_valid(self):
         def validate_json(item):
             expected_keys = {
                 'id': int,
@@ -69,23 +69,28 @@ class BaseEndpoint:
                     return False, f"Type mismatch for key '{key}': expected {expected_type}, got {type(item[key])}"
             return True, None
 
+        if 'data' in self.json:
+            self.json = self.json['data']
+        else:
+            self.json = self.json
+
         # Проверяем, является ли response_json списком или словарем
-        if isinstance(response_json, list):
-            for idx, entry in enumerate(response_json):
+        if isinstance(self.json, list):
+            for idx, entry in enumerate(self.json):
                 is_valid, error_message = validate_json(entry)
                 if not is_valid:
                     self.are_equal(is_valid, True,
                                    f'Found not valid element in json response at index {idx}: {error_message}')
-        elif isinstance(response_json, dict):
-            is_valid, error_message = validate_json(response_json)
+        elif isinstance(self.json, dict):
+            is_valid, error_message = validate_json(self.json)
             self.are_equal(is_valid, True, f'Found not valid element in json response: {error_message}')
         else:
-            self.are_equal(False, True, f'Unexpected response_json type: {type(response_json)}')
+            self.are_equal(False, True, f'Unexpected response_json type: {type(self.json)}')
 
     @allure.step('Check that unique keys are in response body')
-    def check_unique_body_data(self, response_json):
-        id_type = type(response_json['id'])
-        updated_by = response_json['updated_by']
+    def check_unique_body_data(self):
+        id_type = type(self.json['id'])
+        updated_by = self.json['updated_by']
         auth_name = self.auth_json['name']
         self.are_equal(id_type, int, f'Needed int type in id, but given {id_type}')
         self.are_equal(updated_by, auth_name, f'Needed {auth_name} in updated_by, but given {updated_by}')
@@ -99,9 +104,9 @@ class BaseEndpoint:
         return self.response
 
     @allure.step('Check author name')
-    def check_author_name(self, expected_name, result_name):
+    def check_author_name(self, result_name):
         self.are_equal(
-            expected_name,
+            self.auth_json_another_user['name'],
             result_name,
-            f'Needed author {expected_name}, but given another author {result_name}'
+            f"Needed author {self.auth_json_another_user['name']}, but given another author {result_name}"
         )
