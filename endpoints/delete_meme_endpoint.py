@@ -1,6 +1,5 @@
 import requests
 import allure
-
 from endpoints.base_enpdoint import BaseEndpoint
 
 

@@ -17,6 +17,7 @@ def test_get_full_meme_list(get_class, auth_token):
 def test_get_one(get_class, auth_token, base_class):
     get_class.get_one_meme(auth_token, base_class.generate_random_meme_id())
     get_class.check_one_meme()
+    get_class.check_json_is_valid()
 
 
 @allure.feature('Get meme tests')

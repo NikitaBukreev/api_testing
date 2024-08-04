@@ -103,7 +103,7 @@ def test_edit_meme_another_user(put_class, auth_token, base_class, post_class, g
 
 
 @allure.feature('Edit meme tests')
-@allure.story("Check that id in request path and request bode must be the same")
+@allure.story("Check that id in request path and request body must be the same")
 @pytest.mark.regress
 def test_edit_meme_different_id(put_class, auth_token, post_class, delete_class):
     post_class.post_meme(auth_token, BODY_POST)

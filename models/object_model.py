@@ -1,14 +1,14 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, StrictStr, StrictInt
 
 
-class ResponseModel(BaseModel):
-    id: int
+class OneMemeModel(BaseModel):
+    id: StrictInt
     info: dict
     tags: list
-    text: str
-    updated_by: str
-    url: str
+    text: StrictStr
+    updated_by: StrictStr
+    url: StrictStr
 
 
-class GetAllResponseModel(BaseModel):
-    data: list[ResponseModel]
+class AllMemeModel(BaseModel):
+    data: list[OneMemeModel]
